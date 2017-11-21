@@ -7,6 +7,10 @@ public class NavMap : MonoBehaviour {
     private float minLat, minLon, maxLat, maxLon;
     private GameObject map;
     public float scale = 1000;
+    List<string> roadTypes = new List<string> { "motorway", "trunk",
+    "primary", "secondary", "tertiary", "unclassified", "residential",
+    "service", "motorway_link", "trunk_link", "primary_link",
+    "secondary_link", "tertiary_link", "road" };
 
     // Use this for initialization
     void Start () {
@@ -74,7 +78,7 @@ public class NavMap : MonoBehaviour {
                             case "tag":
                                 string key = child.Attributes["k"].Value;
                                 string val = child.Attributes["v"].Value;
-                                if(key == "highway") shouldAdd = true;
+                                if(key == "highway" && roadTypes.Contains(val)) shouldAdd = true;
                                 var tag = new ArrayList();
                                 tag.Add(key);
                                 tag.Add(val);
