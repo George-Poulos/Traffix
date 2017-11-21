@@ -9,11 +9,6 @@ public class Map : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Debug.Log(mapNodes.Count);
-        foreach(Way w in mapWays.Values) {
-            Debug.Log(w.id);
-            Debug.Log(w.refs.Count);
-        }
     }
 
     // Update is called once per frame
@@ -46,10 +41,13 @@ public class Map : MonoBehaviour {
             n.addEdge(id);
         }
         var line = w.AddComponent<LineRenderer>();
+        line.material = new Material(Shader.Find("Sprites/Default"));
         // Set the width of the Line Renderer
         line.SetWidth(0.01F, 0.01F);
+        line.startColor = Color.white;
+        line.endColor = Color.white;
         // Set the number of vertex fo the Line Renderer
-        line.SetVertexCount(refs.Count);
+        line.positionCount = refs.Count;
         for(int i = 0; i < refs.Count; i++) {
             line.SetPosition(i, mapNodes[refs[i]].transform.position);
         }

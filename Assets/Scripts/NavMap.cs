@@ -6,7 +6,7 @@ using UnityEngine;
 public class NavMap : MonoBehaviour {
     private float minLat, minLon, maxLat, maxLon;
     private GameObject map;
-    public float scale = 100;
+    public float scale = 1000;
 
     // Use this for initialization
     void Start () {
