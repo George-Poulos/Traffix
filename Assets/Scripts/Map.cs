@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class Map : MonoBehaviour {
     public NavMap navMap;
-    private Dictionary<long, GameObject> mapObjs;
+    private Dictionary<long, Node> mapNodes = new Dictionary<long, Node>();
+    private Dictionary<long, Way> mapWays = new Dictionary<long, Way>();
 
     // Use this for initialization
     void Start () {
-
+        Debug.Log(mapNodes.Count);
+        foreach(Way w in mapWays.Values) {
+            Debug.Log(w.id);
+            Debug.Log(w.refs.Count);
+        }
     }
 
     // Update is called once per frame
@@ -16,11 +21,38 @@ public class Map : MonoBehaviour {
 
     }
 
-    public void addNode(long id, float lat, float lon) {
-        GameObject n = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        n.transform.localScale = new Vector3(0.01F, 0.01F, 0.01F);
+    public void addNode(long id, float lat, float lon, ArrayList tags) {
+        GameObject n = new GameObject();
         n.transform.parent = transform;
         n.transform.position = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
         n.name = id.ToString();
+        n.AddComponent<Node>();
+        Node node = n.GetComponent<Node>();
+        node.addTags(tags);
+        node.id = id;
+        mapNodes.Add(id, node);
+    }
+
+    public void addEdge(long id, ArrayList tags, List<long> refs) {
+        GameObject w = new GameObject();
+        w.transform.parent = transform;
+        w.name = id.ToString();
+        Way way = w.AddComponent<Way>();
+        way.addTags(tags);
+        way.id = id;
+        foreach(long nodeId in refs) {
+            way.addRef(nodeId);
+            Node n = mapNodes[nodeId];
+            n.addEdge(id);
+        }
+        var line = w.AddComponent<LineRenderer>();
+        // Set the width of the Line Renderer
+        line.SetWidth(0.01F, 0.01F);
+        // Set the number of vertex fo the Line Renderer
+        line.SetVertexCount(refs.Count);
+        for(int i = 0; i < refs.Count; i++) {
+            line.SetPosition(i, mapNodes[refs[i]].transform.position);
+        }
+        mapWays.Add(id, way);
     }
 }
