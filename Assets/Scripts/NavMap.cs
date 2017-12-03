@@ -1,11 +1,24 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Priority_Queue;
 
 public class NavMap : MonoBehaviour {
+
+    public class QueueNode : FastPriorityQueueNode
+    {
+        public long id { get; private set; }
+        public NavPath path { get; set; }
+        public QueueNode(long id)
+        {
+            this.id = id;
+        }
+    }
+
     private float minLat, minLon, maxLat, maxLon;
-    private GameObject map;
+    public GameObject map { get; private set; }
     public float scale = 1000;
     List<string> roadTypes = new List<string> { "motorway", "trunk",
     "primary", "secondary", "tertiary", "unclassified", "residential",
@@ -101,6 +114,7 @@ public class NavMap : MonoBehaviour {
                     break;
             }
         }
+        baseMap.render();
     }
 
     public float lonToX(float lon) {
@@ -117,5 +131,56 @@ public class NavMap : MonoBehaviour {
 
     public float yToLat(float y) {
         return (y/scale) + minLat;
+    }
+
+    public NavPath findPath(long start, long end) {
+        Map m = map.GetComponent<Map>();
+        Node s = m.Nodes[start];
+        Node t = m.Nodes[end];
+        return Dijkstra(s, t, m);
+    }
+
+    private NavPath Dijkstra(Node s, Node t, Map m) {
+        Dictionary<long, QueueNode> touched = new Dictionary<long, QueueNode>();
+        HashSet<long> done = new HashSet<long>();
+        FastPriorityQueue<QueueNode> pq = new FastPriorityQueue<QueueNode>(m.Nodes.Count);
+        QueueNode start = new QueueNode(s.id);
+        start.path = new NavPath();
+        touched[s.id] = start;
+        pq.Enqueue(start, 0);
+
+        while(pq.Count != 0) {
+            QueueNode qn = pq.Dequeue();
+            float distance = qn.Priority;
+            NavPath p = qn.path;
+            Node n = m.Nodes[qn.id];
+            if(n.id == t.id) {
+                Debug.Log(p.getEdges().Count);
+                return p;
+            }
+            done.Add(n.id);
+            foreach(var edgeId in n.Edges) {
+                Way edge = m.Ways[edgeId];
+                Node next = m.Nodes[edge.GetNext(n.id)];
+                float newWeight = distance + edge.weight;
+                if(!done.Contains(next.id)) {
+                    if(touched.ContainsKey(next.id)) {
+                        qn = touched[next.id];
+                        if(qn.Priority > newWeight) {
+                            pq.UpdatePriority(qn, newWeight);
+                            qn.path = new NavPath(p.getEdges());
+                            qn.path.Add(edge);
+                        }
+                    } else {
+                        qn = new QueueNode(next.id);
+                        qn.path = new NavPath(p.getEdges());
+                        qn.path.Add(edge);
+                        touched[next.id] = qn;
+                        pq.Enqueue(qn, newWeight);
+                    }
+                }
+            }
+        }
+        return new NavPath();
     }
 }
