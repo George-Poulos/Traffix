@@ -14,7 +14,7 @@ public class MenuToggle : MonoBehaviour {
 		controllerEvents.ButtonTwoReleased += ControllerEvents_ButtonTwoReleased;
 	}
 
-	void OnDiable(){
+	void OnDisable(){
 		controllerEvents.ButtonTwoReleased -= ControllerEvents_ButtonTwoReleased;
 	}
 
