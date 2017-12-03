@@ -79,6 +79,7 @@ public class NavMap : MonoBehaviour {
                                 string key = child.Attributes["k"].Value;
                                 string val = child.Attributes["v"].Value;
                                 if(key == "highway" && roadTypes.Contains(val)) shouldAdd = true;
+                                if(key == "layer" && val != "0") shouldAdd = false;
                                 var tag = new ArrayList();
                                 tag.Add(key);
                                 tag.Add(val);
