@@ -661,7 +661,7 @@ MonoBehaviour:
   clickMethod: 0
   attemptClickOnDeactivate: 0
   clickAfterHoverDuration: 0
-  controller: {fileID: 0}
+  controller: {fileID: 544486329}
   pointerOriginTransform: {fileID: 0}
   hoveringElement: {fileID: 0}
   controllerRenderModel: {fileID: 0}
@@ -1360,7 +1360,7 @@ MonoBehaviour:
   clickMethod: 0
   attemptClickOnDeactivate: 0
   clickAfterHoverDuration: 0
-  controller: {fileID: 0}
+  controller: {fileID: 1615719798}
   pointerOriginTransform: {fileID: 0}
   hoveringElement: {fileID: 0}
   controllerRenderModel: {fileID: 0}
