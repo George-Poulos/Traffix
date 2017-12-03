@@ -41,14 +41,18 @@ public class Way : MonoBehaviour {
     public long GetNext(long id) {
         if(refs[0] == id)
             return refs[refs.Count-1];
-        else if(refs[refs.Count-1] == id)
+        else if((!tags.ContainsKey("oneway") || tags["oneway"] != "yes") && refs[refs.Count-1] == id)
             return refs[0];
         else
-            throw new Exception(String.Format("invalid id {0} for {1}", id, this.id));
+            return -1;
     }
 
     public bool isBisect(long id) {
         return (refs[0] != id && refs[refs.Count-1] != id);
+    }
+
+    public bool isBack(long id) {
+        return refs[refs.Count-1] == id;
     }
 
     public List<long> split(long id) {

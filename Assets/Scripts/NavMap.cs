@@ -155,28 +155,31 @@ public class NavMap : MonoBehaviour {
             NavPath p = qn.path;
             Node n = m.Nodes[qn.id];
             if(n.id == t.id) {
-                Debug.Log(p.getEdges().Count);
                 return p;
             }
             done.Add(n.id);
             foreach(var edgeId in n.Edges) {
                 Way edge = m.Ways[edgeId];
-                Node next = m.Nodes[edge.GetNext(n.id)];
-                float newWeight = distance + edge.weight;
-                if(!done.Contains(next.id)) {
-                    if(touched.ContainsKey(next.id)) {
-                        qn = touched[next.id];
-                        if(qn.Priority > newWeight) {
-                            pq.UpdatePriority(qn, newWeight);
-                            qn.path = new NavPath(p.getEdges());
-                            qn.path.Add(edge);
+                if(edge.GetNext(n.id) != -1) {
+                    Node next = m.Nodes[edge.GetNext(n.id)];
+                    float newWeight = distance + edge.weight;
+                    if(!done.Contains(next.id)) {
+                        List<Vector3> points = new List<Vector3>(edge.waypoints);
+                        if(edge.isBack(n.id)) points.Reverse();
+                        if(touched.ContainsKey(next.id)) {
+                            qn = touched[next.id];
+                            if(qn.Priority > newWeight) {
+                                pq.UpdatePriority(qn, newWeight);
+                                qn.path = new NavPath(p.getPoints());
+                                qn.path.Add(points);
+                            }
+                        } else {
+                            qn = new QueueNode(next.id);
+                            qn.path = new NavPath(p.getPoints());
+                            qn.path.Add(points);
+                            touched[next.id] = qn;
+                            pq.Enqueue(qn, newWeight);
                         }
-                    } else {
-                        qn = new QueueNode(next.id);
-                        qn.path = new NavPath(p.getEdges());
-                        qn.path.Add(edge);
-                        touched[next.id] = qn;
-                        pq.Enqueue(qn, newWeight);
                     }
                 }
             }

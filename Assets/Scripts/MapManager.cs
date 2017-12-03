@@ -15,7 +15,7 @@ public class MapManager : MonoBehaviour {
         navMapObj.AddComponent<NavMap>();
         var navMap = navMapObj.GetComponent<NavMap>();
         navMap.setMap(filePath);
-        NavPath p = navMap.findPath(929584674, 26098106);
+        NavPath p = navMap.findPath(929515174, 705003396);
         GameObject path = new GameObject("Path");
         var line = path.AddComponent<LineRenderer>();
         List<Vector3> points = p.getPoints();
@@ -30,7 +30,7 @@ public class MapManager : MonoBehaviour {
         car.name = "Car";
         car.transform.localScale = new Vector3(.1f,.1f,.1f);
         var move = car.AddComponent<MoveCrap>();
-        car.transform.position = navMap.map.GetComponent<Map>().Nodes[929584674].gameObject.transform.position;
+        car.transform.position = navMap.map.GetComponent<Map>().Nodes[929515174].gameObject.transform.position;
         move.positions = points.ToArray();
     }
 
