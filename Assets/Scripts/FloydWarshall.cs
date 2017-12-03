@@ -37,8 +37,9 @@ public class FloydWarshall : MonoBehaviour {
 	}
 
 	int[][] initialMatrix(int[][] distanceMatrix) {
-		int[][] paths = new int[distanceMatrix.Length][distanceMatrix.Length];
+		int[][] paths = new int[distanceMatrix.Length][];
 		for (int i = 0; i < distanceMatrix.Length; i++) {
+			paths [i] = new int [distanceMatrix.Length];
 			for (int j = 0; j < distanceMatrix.Length; j++) {
 				if (distanceMatrix[i][j] != 0 && distanceMatrix[i][j] != int.MaxValue) {
 					paths[i][j] = i;
@@ -54,12 +55,12 @@ public class FloydWarshall : MonoBehaviour {
 		if (i == j){
 			endPath.Add (i);
 		}
-		else if (paths [i][j] = 0){
+		else if (paths [i][j] == 0){
 			endPath.Clear ();
 			endPath.Add (-1);
 		}
 		else{
-			getPath(paths, i, paths[i][j]);
+			getPath(paths, i, paths[i][j], endPath);
 			endPath.Add (j);
 		}
 	}
