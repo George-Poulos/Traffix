@@ -8,6 +8,9 @@ public class RoadRenderer : MonoBehaviour {
     public Map map;
     private int vertices = 2;
     private List<GameObject> segments = new List<GameObject>(1);
+    private List<OrientedPoint[]> paths = new List<OrientedPoint[]>(1);
+    private List<Vector3> waypoints = new List<Vector3>();
+    private float cost = 0;
     private List<Vector3> verticesPos = new List<Vector3>(2);
     private float width = 1F;
     private float height = 1F;
@@ -30,6 +33,10 @@ public class RoadRenderer : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        RenderSegments();
+    }
+
+    private void RenderSegments() {
         Vertex[] vertices = {
             new Vertex(new Vector3(-.0125f,-.0025f,0), Vector3.down, 0),
             new Vertex(new Vector3(.0125f,-.0025f,0), Vector3.down, 1),
@@ -46,67 +53,19 @@ public class RoadRenderer : MonoBehaviour {
             4, 5,
             6, 7
         };
-        int edgeLoops = 20;
         ExtrudeShape shape = new ExtrudeShape(vertices, lines);
 
-        for(int i = 0; i < verticesPos.Count - 4; i += 3) {
-            Vector3[] points = {
-                verticesPos[i],
-                verticesPos[i+1],
-                verticesPos[i+2],
-                verticesPos[i+3]
-            };
-            AddSegment(points, shape, edgeLoops);
+        for(int i = 0; i < segments.Count; i++) {
+            RenderSegment(segments[i], shape, paths[i]);
         }
-        int remainder = (verticesPos.Count - 1) % 3;
-        int n = verticesPos.Count;
-        Vector3[] remPoints = new Vector3[4];
-        if(remainder == 1) {
-            remPoints[0] = verticesPos[n-2];
-            remPoints[1] = verticesPos[n-1];
-            remPoints[2] = verticesPos[n-1];
-            remPoints[3] = verticesPos[n-1];
-        } else if(remainder == 2) {
-            remPoints[0] = verticesPos[n-3];
-            remPoints[1] = verticesPos[n-2];
-            remPoints[2] = verticesPos[n-2];
-            remPoints[3] = verticesPos[n-1];
-        } else if(n-4 > 0) {
-                remPoints[0] = verticesPos[n-4];
-                remPoints[1] = verticesPos[n-3];
-                remPoints[2] = verticesPos[n-2];
-                remPoints[3] = verticesPos[n-1];
-        }
-        AddSegment(remPoints, shape, edgeLoops);
     }
 
-    private void AddSegment(Vector3[] points, ExtrudeShape shape, int edgeLoops) {
+    private void RenderSegment(GameObject segment, ExtrudeShape shape, OrientedPoint[] path) {
         // TODO: use the shape from the previous segment to make segments continuous
         // TODO: use sampling to fix texture stretching
-        OrientedPoint[] path = new OrientedPoint[edgeLoops+1];
-        CubicBezier3D bezier = new CubicBezier3D(points);
-        GameObject segment = new GameObject();
-
-        var renderer = segment.AddComponent<MeshRenderer>();
-        //set texture?
         MeshFilter mf = segment.AddComponent<MeshFilter>();
         Mesh mesh = mf.mesh;
-
-        for(int i = 0; i <= edgeLoops; i++) {
-            float t = (1f/edgeLoops) * i;
-            path[i] = new OrientedPoint(bezier.GetPoint(t), bezier.GetOrientation3D(t, Vector3.up));
-        }
-
         Extrude(mesh, shape, path);
-
-        Material roadMaterial = new Material(Shader.Find("Standard"));
-        renderer.material = roadMaterial;
-        roadMaterial.mainTexture = Resources.Load("road") as Texture;
-
-        segment.transform.parent = transform;
-        segment.name = gameObject.name + String.Format("-{0}",segments.Count);
-        segments.Add(segment);
-        map.navSurfaces.Add(segment.AddComponent<NavMeshSurface>());
     }
 
     // Update is called once per frame
@@ -199,5 +158,72 @@ public class RoadRenderer : MonoBehaviour {
         mesh.triangles = triangleIndices;
         mesh.normals = normals;
         mesh.uv = uvs;
+    }
+
+    public void GenSegments() {
+        int edgeLoops = 20;
+        for(int i = 0; i < verticesPos.Count - 4; i += 3) {
+            Vector3[] points = {
+                verticesPos[i],
+                verticesPos[i+1],
+                verticesPos[i+2],
+                verticesPos[i+3]
+            };
+            AddSegment(points, edgeLoops);
+        }
+        int remainder = (verticesPos.Count - 1) % 3;
+        int n = verticesPos.Count;
+        Vector3[] remPoints = new Vector3[4];
+        if(remainder == 1) {
+            remPoints[0] = verticesPos[n-2];
+            remPoints[1] = verticesPos[n-1];
+            remPoints[2] = verticesPos[n-1];
+            remPoints[3] = verticesPos[n-1];
+        } else if(remainder == 2) {
+            remPoints[0] = verticesPos[n-3];
+            remPoints[1] = verticesPos[n-2];
+            remPoints[2] = verticesPos[n-2];
+            remPoints[3] = verticesPos[n-1];
+        } else if(n != 0) {
+                remPoints[0] = verticesPos[n-4];
+                remPoints[1] = verticesPos[n-3];
+                remPoints[2] = verticesPos[n-2];
+                remPoints[3] = verticesPos[n-1];
+        }
+        AddSegment(remPoints, edgeLoops);
+
+        Way w = gameObject.GetComponent<Way>();
+        w.weight = cost;
+        w.waypoints = new List<Vector3>(waypoints);
+    }
+
+    private void AddSegment(Vector3[] points, int edgeLoops) {
+        OrientedPoint[] path = new OrientedPoint[edgeLoops+1];
+        CubicBezier3D bezier = new CubicBezier3D(points);
+        GameObject segment = new GameObject();
+
+        var renderer = segment.AddComponent<MeshRenderer>();
+
+        Vector3? prev = null, curr = null;
+        for(int i = 0; i <= edgeLoops; i++) {
+            float t = (1f/edgeLoops) * i;
+            prev = curr;
+            curr = bezier.GetPoint(t);
+            waypoints.Add((Vector3)curr);
+            if(prev != null) {
+                cost += ((Vector3)(curr - prev)).magnitude;
+            }
+            path[i] = new OrientedPoint((Vector3)curr, bezier.GetOrientation3D(t, Vector3.up));
+        }
+
+        Material roadMaterial = new Material(Shader.Find("Standard"));
+        renderer.material = roadMaterial;
+        roadMaterial.mainTexture = Resources.Load("road") as Texture;
+
+        segment.transform.parent = transform;
+        segment.name = gameObject.name + String.Format("-{0}",segments.Count);
+        segments.Add(segment);
+        paths.Add(path);
+        map.navSurfaces.Add(segment.AddComponent<NavMeshSurface>());
     }
 }
