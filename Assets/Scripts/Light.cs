@@ -8,10 +8,12 @@ public class Light : MonoBehaviour {
     public Vector3 position;
     public Vector3 scale;
     public enum LightState { RED_GREEN, GREEN_RED }
+    public enum LightColor { RED, GREEN }
     private LightState lightState;
     private Transform lightTransform;
     private const float SCALE_FACTOR = 0.05f;
     private const float OFFSET = 0.1f;
+    private const float TRANSPARANCY = 0.5f;
 
 // Use this for initialization
     void Start () {
@@ -19,6 +21,7 @@ public class Light : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        Debug.Log("Calling this");
 
     }
     public Light(Vector3 pos, Transform tf) {
@@ -50,16 +53,42 @@ public class Light : MonoBehaviour {
 
         switch (lightState) {
             case LightState.RED_GREEN:
-                Nlight.GetComponent<Renderer>().material.color = Color.red;
-                Slight.GetComponent<Renderer>().material.color = Color.red;
-                Elight.GetComponent<Renderer>().material.color = Color.green;
-                Wlight.GetComponent<Renderer>().material.color = Color.green;
+                setLightColor(Nlight, LightColor.RED);
+                setLightColor(Slight, LightColor.RED);
+                setLightColor(Elight, LightColor.GREEN);
+                setLightColor(Wlight, LightColor.GREEN);
                 break;
             case LightState.GREEN_RED:
-                Nlight.GetComponent<Renderer>().material.color = Color.green;
-                Slight.GetComponent<Renderer>().material.color = Color.green;
-                Elight.GetComponent<Renderer>().material.color = Color.red;
-                Wlight.GetComponent<Renderer>().material.color = Color.red;
+                setLightColor(Nlight, LightColor.GREEN);
+                setLightColor(Slight, LightColor.GREEN);
+                setLightColor(Elight, LightColor.RED);
+                setLightColor(Wlight, LightColor.RED);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void setLightColor(GameObject go, LightColor lc)
+    {
+        Color myRed = new Color(Color.red.r, Color.red.g, Color.red.b, TRANSPARANCY);
+        Color myGreen = new Color(Color.green.r, Color.green.g, Color.green.b, TRANSPARANCY);
+
+        go.GetComponent<Renderer>().material.SetFloat("_Mode", 2);
+        go.GetComponent<Renderer>().material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+        go.GetComponent<Renderer>().material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+        go.GetComponent<Renderer>().material.SetInt("_ZWrite", 0);
+        go.GetComponent<Renderer>().material.DisableKeyword("_ALPHATEST_ON");
+        go.GetComponent<Renderer>().material.EnableKeyword("_ALPHABLEND_ON");
+        go.GetComponent<Renderer>().material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+        go.GetComponent<Renderer>().material.renderQueue = 3000;
+
+        switch(lc) {
+            case LightColor.RED:
+                go.GetComponent<Renderer>().material.color = myRed;
+                break;
+            case LightColor.GREEN:
+                go.GetComponent<Renderer>().material.color = myGreen;
                 break;
             default:
                 break;
