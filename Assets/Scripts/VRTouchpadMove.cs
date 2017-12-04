@@ -1,45 +1,49 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
+
+// // from answers.unity3d.com/questions/1188342
+
 
 public class VRTouchpadMove : MonoBehaviour
 {
+	public GameObject player;
 
-	[SerializeField]
-	private Transform rig;
+	SteamVR_Controller.Device device;
+	SteamVR_TrackedObject controller;
 
-	private Valve.VR.EVRButtonId touchpad = Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad;
+	Vector2 touchpad;
 
-	private SteamVR_Controller.Device controller { get { return SteamVR_Controller.Input((int)trackedObj.index); } }
-	private SteamVR_TrackedObject trackedObj;
-
-	private Vector2 axis = Vector2.zero;
+	float sensitivityX = 0.75F;
+	float sensitivityForward = 1.5F;
+	private Vector3 playerPos;
 
 	void Start()
 	{
-		trackedObj = GetComponent<SteamVR_TrackedObject>();
+		controller = gameObject.GetComponent<SteamVR_TrackedObject>();
 	}
 
+	// Update is called once per frame
 	void Update()
 	{
-		if (controller == null)
+		device = SteamVR_Controller.Input((int)controller.index);
+		if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
 		{
-			Debug.Log("Controller not initialized");
-			return;
-		}
+			touchpad = device.GetAxis(EVRButtonId.k_EButton_SteamVR_Touchpad);
 
-		var device = SteamVR_Controller.Input((int)trackedObj.index);
 
-		if (controller.GetTouch(touchpad))
-		{
-			axis = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
+			if (touchpad.y > 0.2f || touchpad.y < -0.2f) {
+				// Move Forward
+				player.transform.position += controller.transform.forward * Time.deltaTime * (touchpad.y * sensitivityForward);
 
-			if (rig != null)
-			{
-				rig.position += (transform.right * axis.x + transform.forward * axis.y) * Time.deltaTime;
-				rig.position = new Vector3(rig.position.x, 0, rig.position.z);
 			}
-		}
 
+			if (touchpad.x > 0.3f || touchpad.x < -0.3f) {
+				player.transform.Rotate (0, touchpad.x * sensitivityX, 0);
+			
+			}
+
+		}
 	}
 }
