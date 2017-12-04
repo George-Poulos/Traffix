@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SizeSlider : MonoBehaviour {
 
 	public Slider slider;
+	NavMap nav = GameObject.Find("NavMap").GetComponent<NavMap>();
 
 	// Use this for initialization
 	void Start () {
@@ -17,8 +18,8 @@ public class SizeSlider : MonoBehaviour {
 
 	}
 
-	public void ValueChangeCheck()
+	public void ValueChangeCheck(float newValue)
 	{
-		Debug.Log ("Size Changed");
+		Debug.Log ("Size Changed : " );
 	}
 }
