@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveCrap : MonoBehaviour {
-    public Vector3[] positions;
-    public Transform ObjectToMove;
+public class Car : MonoBehaviour {
+    public Vector3[] route;
     public float MoveSpeed = 8;
     Coroutine MoveIE;
+    private Transform ObjectToMove;
 
     void Start()
     {
@@ -16,20 +16,20 @@ public class MoveCrap : MonoBehaviour {
 
     IEnumerator moveObject()
     {
-        for (int i = 0; i < positions.Length; i++)
+        for (int i = 0; i < route.Length; i++)
         {
             MoveIE = StartCoroutine(Moving(i));
             yield return MoveIE;
         }
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(1);
         Destroy(gameObject);
     }
 
     IEnumerator Moving(int currentPosition)
     {
-        while (ObjectToMove.transform.position != positions[currentPosition])
+        while (ObjectToMove.transform.position != route[currentPosition])
         {
-            ObjectToMove.transform.position = Vector3.MoveTowards(ObjectToMove.transform.position, positions[currentPosition] , MoveSpeed * Time.deltaTime);
+            ObjectToMove.transform.position = Vector3.MoveTowards(ObjectToMove.transform.position, route[currentPosition] , MoveSpeed * Time.deltaTime);
             yield return null;
         }
 

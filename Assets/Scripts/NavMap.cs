@@ -18,18 +18,19 @@ public class NavMap : MonoBehaviour {
         }
     }
 
-    private float minLat, minLon, maxLat, maxLon;
     public GameObject mapObj { get; private set; }
-    private Map map;
+    public GameObject spawnPrefab;
     public float scale = 1000;
-    List<string> roadTypes = new List<string> { "motorway", "trunk",
-                                                "primary", "secondary", "tertiary", "unclassified", "residential",
-                                                "service", "motorway_link", "trunk_link", "primary_link",
-                                                "secondary_link", "tertiary_link", "road" };
+    public List<Node> intersections { get; private set; }
+    public List<Node> spawnPoints { get; private set; }
+    public Dictionary<long, int> pathMapping { get; private set; }
 
-    //private List<Spawns> spawns;
-    private List<Node> intersections = new List<Node>();
-    private Dictionary<long, int> pathMapping = new Dictionary<long, int>();
+    private float minLat, minLon, maxLat, maxLon;
+    private Map map;
+    private List<string> roadTypes = new List<string> { "motorway", "trunk",
+                                                        "primary", "secondary", "tertiary", "unclassified", "residential",
+                                                        "service", "motorway_link", "trunk_link", "primary_link",
+                                                        "secondary_link", "tertiary_link", "road" };
     private Dictionary<long, List<NavPath>> paths = new Dictionary<long, List<NavPath>>();
 
     // Use this for initialization
@@ -122,19 +123,23 @@ public class NavMap : MonoBehaviour {
             }
         }
         map.Generate();
+        pathMapping = new Dictionary<long, int>();
+        intersections = new List<Node>();
         foreach(var edge in map.Ways.Values) {
             intersections.Add(map.Nodes[edge.StartId]);
             pathMapping[edge.StartId] = intersections.Count-1;
             intersections.Add(map.Nodes[edge.EndId]);
             pathMapping[edge.EndId] = intersections.Count-1;
         }
-        List<Node> spawnPoints = intersections.FindAll(delegate(Node n) { return n.Edges.Count == 1; });
-        GenSpawnPaths(spawnPoints);
+        spawnPoints = intersections.FindAll(delegate(Node n) { return n.Edges.Count == 1; });
+        GenSpawnPoints();
     }
 
-    private void GenSpawnPaths(List<Node> spawns) {
-        foreach(var node in spawns) {
+    private void GenSpawnPoints() {
+        foreach(var node in spawnPoints) {
             paths[node.id] = Dijkstra(node);
+            Spawn s = node.gameObject.AddComponent<Spawn>();
+            s.car = spawnPrefab;
         }
     }
 
