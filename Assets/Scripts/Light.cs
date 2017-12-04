@@ -14,6 +14,10 @@ public class Light : MonoBehaviour {
     private const float SCALE_FACTOR = 0.05f;
     private const float OFFSET = 0.1f;
     private const float TRANSPARANCY = 0.5f;
+    private GameObject Nlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+    private GameObject Slight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+    private GameObject Elight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+    private GameObject Wlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
 // Use this for initialization
     void Start () {
@@ -21,21 +25,18 @@ public class Light : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        Debug.Log("Calling this");
-
+        Nlight.transform.Rotate(0, 1, 0);
+        Debug.Log("Updating Light");
     }
+
     public Light(Vector3 pos, Transform tf) {
         position = pos;
         lightTransform = tf;
         // Initially set the lights to a random state.
         lightState = (LightState)Math.Round(UnityEngine.Random.value);
+        Nlight.SetActive(true);
     }
     public void draw() {
-        GameObject Nlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        GameObject Slight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        GameObject Elight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        GameObject Wlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-
         Nlight.transform.parent = lightTransform;
         Slight.transform.parent = lightTransform;
         Elight.transform.parent = lightTransform;
