@@ -10,6 +10,7 @@ public class Map : MonoBehaviour {
     public Dictionary<long, Way> Ways { get { return mapWays; } }
     private Dictionary<long, Node> mapNodes = new Dictionary<long, Node>();
     private Dictionary<long, Way> mapWays = new Dictionary<long, Way>();
+    private Dictionary<long, Light> Lights = new Dictionary<long, Light>();
 
     // Use this for initialization
     void Start () {
@@ -23,18 +24,18 @@ public class Map : MonoBehaviour {
     public void addNode(long id, float lat, float lon, ArrayList tags, bool isLight) {
         GameObject n = new GameObject();
         n.transform.parent = transform;
-        n.transform.position = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
+        Vector3 nodePosition = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
+        n.transform.position = nodePosition;
         n.name = id.ToString();
         n.AddComponent<Node>();
         Node node = n.GetComponent<Node>();
         node.addTags(tags);
         node.id = id;
         mapNodes.Add(id, node);
-        if (isLight) {
-            GameObject light = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            light.transform.parent = transform;
-            light.transform.position = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
-            light.transform.localScale = new Vector3(0.2F, 0.2f, 0.2f);
+        if (isLight) {            
+            Light streetLight = new Light(nodePosition, transform);
+            streetLight.draw();
+            Lights.Add(id, streetLight);
         }
     }
 
