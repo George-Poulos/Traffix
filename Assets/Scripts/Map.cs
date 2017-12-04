@@ -11,6 +11,7 @@ public class Map : MonoBehaviour {
     public List<NavMeshSurface> navSurfaces = new List<NavMeshSurface>();
     private Dictionary<long, Node> mapNodes = new Dictionary<long, Node>();
     private Dictionary<long, Way> mapWays = new Dictionary<long, Way>();
+    private List<Node> intersections;
 
     // Use this for initialization
     void Start () {
@@ -67,8 +68,8 @@ public class Map : MonoBehaviour {
         mapWays.Add(id, way);
     }
 
-    public void render() {
-        List<Node> intersections = mapNodes.Values.ToList().FindAll(delegate(Node n) {
+    public void Generate() {
+        intersections = mapNodes.Values.ToList().FindAll(delegate(Node n) {
                 return n.Edges.Count > 1;
             });
         long max = mapWays.Values.Max(delegate(Way w) {

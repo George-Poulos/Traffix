@@ -2,6 +2,7 @@
 using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Priority_Queue;
 
@@ -18,12 +19,18 @@ public class NavMap : MonoBehaviour {
     }
 
     private float minLat, minLon, maxLat, maxLon;
-    public GameObject map { get; private set; }
+    public GameObject mapObj { get; private set; }
+    private Map map;
     public float scale = 1000;
     List<string> roadTypes = new List<string> { "motorway", "trunk",
-    "primary", "secondary", "tertiary", "unclassified", "residential",
-    "service", "motorway_link", "trunk_link", "primary_link",
-    "secondary_link", "tertiary_link", "road" };
+                                                "primary", "secondary", "tertiary", "unclassified", "residential",
+                                                "service", "motorway_link", "trunk_link", "primary_link",
+                                                "secondary_link", "tertiary_link", "road" };
+
+    //private List<Spawns> spawns;
+    private List<Node> intersections = new List<Node>();
+    private Dictionary<long, int> pathMapping = new Dictionary<long, int>();
+    private Dictionary<long, List<NavPath>> paths = new Dictionary<long, List<NavPath>>();
 
     // Use this for initialization
     void Start () {
@@ -39,13 +46,13 @@ public class NavMap : MonoBehaviour {
         long id;
         XmlNodeList children;
 
-        if(map != null) Destroy(map);
-        map = new GameObject("Map");
-        map.transform.position = new Vector3(0, 0, 0);
-        map.transform.parent = transform;
-        map.AddComponent<Map>();
-        var baseMap = map.GetComponent<Map>();
-        baseMap.navMap = this;
+        if(mapObj != null) Destroy(mapObj);
+        mapObj = new GameObject("Map");
+        mapObj.transform.position = new Vector3(0, 0, 0);
+        mapObj.transform.parent = transform;
+        mapObj.AddComponent<Map>();
+        map = mapObj.GetComponent<Map>();
+        map.navMap = this;
 
         // XmlReaderSettings settings = new XmlReaderSettings();
         // settings.IgnoreWhitespace = true;
@@ -77,7 +84,7 @@ public class NavMap : MonoBehaviour {
                         tag.Add(val);
                         tags.Add(tag);
                     }
-                    baseMap.addNode(id, lat, lon, tags);
+                    map.addNode(id, lat, lon, tags);
                     break;
 
                 case "way":
@@ -107,14 +114,28 @@ public class NavMap : MonoBehaviour {
                                 break;
                         }
                     }
-                    if(shouldAdd) baseMap.addEdge(id, tags, refs);
+                    if(shouldAdd) map.addEdge(id, tags, refs);
                     break;
 
                 default:
                     break;
             }
         }
-        baseMap.render();
+        map.Generate();
+        foreach(var edge in map.Ways.Values) {
+            intersections.Add(map.Nodes[edge.StartId]);
+            pathMapping[edge.StartId] = intersections.Count-1;
+            intersections.Add(map.Nodes[edge.EndId]);
+            pathMapping[edge.EndId] = intersections.Count-1;
+        }
+        List<Node> spawnPoints = intersections.FindAll(delegate(Node n) { return n.Edges.Count == 1; });
+        GenSpawnPaths(spawnPoints);
+    }
+
+    private void GenSpawnPaths(List<Node> spawns) {
+        foreach(var node in spawns) {
+            paths[node.id] = Dijkstra(node);
+        }
     }
 
     public float lonToX(float lon) {
@@ -133,17 +154,17 @@ public class NavMap : MonoBehaviour {
         return (y/scale) + minLat;
     }
 
-    public NavPath findPath(long start, long end) {
-        Map m = map.GetComponent<Map>();
-        Node s = m.Nodes[start];
-        Node t = m.Nodes[end];
-        return Dijkstra(s, t, m);
+    public List<NavPath> getPaths(long id) {
+        if(paths.ContainsKey(id)) return paths[id];
+        else return null;
     }
 
-    private NavPath Dijkstra(Node s, Node t, Map m) {
+    private List<NavPath> Dijkstra(Node s) {
         Dictionary<long, QueueNode> touched = new Dictionary<long, QueueNode>();
         HashSet<long> done = new HashSet<long>();
-        FastPriorityQueue<QueueNode> pq = new FastPriorityQueue<QueueNode>(m.Nodes.Count);
+        FastPriorityQueue<QueueNode> pq = new FastPriorityQueue<QueueNode>(map.Nodes.Count);
+        List<NavPath> ret = Enumerable.Repeat(NavPath.NoPath, intersections.Count).ToList();
+
         QueueNode start = new QueueNode(s.id);
         start.path = new NavPath();
         touched[s.id] = start;
@@ -153,15 +174,13 @@ public class NavMap : MonoBehaviour {
             QueueNode qn = pq.Dequeue();
             float distance = qn.Priority;
             NavPath p = qn.path;
-            Node n = m.Nodes[qn.id];
-            if(n.id == t.id) {
-                return p;
-            }
+            Node n = map.Nodes[qn.id];
             done.Add(n.id);
+            ret[pathMapping[n.id]] = p;
             foreach(var edgeId in n.Edges) {
-                Way edge = m.Ways[edgeId];
+                Way edge = map.Ways[edgeId];
                 if(edge.GetNext(n.id) != -1) {
-                    Node next = m.Nodes[edge.GetNext(n.id)];
+                    Node next = map.Nodes[edge.GetNext(n.id)];
                     float newWeight = distance + edge.weight;
                     if(!done.Contains(next.id)) {
                         List<Vector3> points = new List<Vector3>(edge.waypoints);
@@ -184,6 +203,6 @@ public class NavMap : MonoBehaviour {
                 }
             }
         }
-        return new NavPath();
+        return ret;
     }
 }
