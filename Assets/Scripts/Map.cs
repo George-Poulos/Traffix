@@ -20,7 +20,7 @@ public class Map : MonoBehaviour {
 
     }
 
-    public void addNode(long id, float lat, float lon, ArrayList tags) {
+    public void addNode(long id, float lat, float lon, ArrayList tags, bool isLight) {
         GameObject n = new GameObject();
         n.transform.parent = transform;
         n.transform.position = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
@@ -30,6 +30,12 @@ public class Map : MonoBehaviour {
         node.addTags(tags);
         node.id = id;
         mapNodes.Add(id, node);
+        if (isLight) {
+            GameObject light = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            light.transform.parent = transform;
+            light.transform.position = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
+            light.transform.localScale = new Vector3(0.2F, 0.2f, 0.2f);
+        }
     }
 
     public void addEdge(long id, ArrayList tags, List<long> refs) {

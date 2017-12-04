@@ -38,6 +38,7 @@ public class NavMap : MonoBehaviour {
         ArrayList tags;
         long id;
         XmlNodeList children;
+        int countLights = 0;
 
         if(map != null) Destroy(map);
         map = new GameObject("Map");
@@ -68,16 +69,21 @@ public class NavMap : MonoBehaviour {
                     float lat = float.Parse(attrs["lat"].Value);
                     float lon = float.Parse(attrs["lon"].Value);
                     tags = new ArrayList();
+                    bool isLight = false;
                     children = node.ChildNodes;
                     foreach(XmlNode child in children) {
                         string key = child.Attributes["k"].Value;
                         string val = child.Attributes["v"].Value;
+                        if(key.Equals("highway") && val.Equals("traffic_signals")) {
+                            countLights++;
+                            isLight = true;
+                        }
                         var tag = new ArrayList();
                         tag.Add(key);
                         tag.Add(val);
                         tags.Add(tag);
                     }
-                    baseMap.addNode(id, lat, lon, tags);
+                    baseMap.addNode(id, lat, lon, tags, isLight);
                     break;
 
                 case "way":
@@ -114,6 +120,8 @@ public class NavMap : MonoBehaviour {
                     break;
             }
         }
+        
+        // Debug.Log("Count: " + countLights);
         baseMap.render();
     }
 
