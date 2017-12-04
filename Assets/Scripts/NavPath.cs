@@ -2,29 +2,31 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NavPath {
-    List<Way> edges;
-
-    public NavPath(List<Way> edges) {
-        this.edges = new List<Way>(edges);
-    }
+    public static NavPath NoPath = new NavPath(false);
+    public static NavPath EmptyPath = new NavPath();
+    List<Vector3> points;
+    public bool isPath { get; private set; }
 
     public NavPath() {
-        this.edges = new List<Way>();
+        this.points = new List<Vector3>();
+        isPath = true;
     }
 
-    public void Add(Way edge) {
-        this.edges.Add(edge);
+    public NavPath(bool isPath) {
+        this.points = new List<Vector3>();
+        this.isPath = isPath;
+    }
+
+    public NavPath(List<Vector3> points) {
+        this.points = new List<Vector3>(points);
+        isPath = true;
+    }
+
+    public void Add(List<Vector3> points) {
+        this.points.AddRange(points);
     }
 
     public List<Vector3> getPoints() {
-        List<Vector3> points = new List<Vector3>();
-        foreach(Way edge in edges) {
-            points.AddRange(edge.waypoints);
-        }
         return points;
-    }
-
-    public List<Way> getEdges() {
-        return edges;
     }
 }

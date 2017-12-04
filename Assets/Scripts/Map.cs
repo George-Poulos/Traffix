@@ -11,9 +11,11 @@ public class Map : MonoBehaviour {
     private Dictionary<long, Node> mapNodes = new Dictionary<long, Node>();
     private Dictionary<long, Way> mapWays = new Dictionary<long, Way>();
     private Dictionary<long, Light> Lights = new Dictionary<long, Light>();
+    private List<Node> intersections;
 
     // Use this for initialization
     void Start () {
+
     }
 
     // Update is called once per frame
@@ -32,9 +34,10 @@ public class Map : MonoBehaviour {
         node.addTags(tags);
         node.id = id;
         mapNodes.Add(id, node);
-		if (node.Tags.ContainsKey ("highway") && node.Tags ["highway"] == "traffic_signals") {
-			Light light = n.AddComponent<Light> ();
-		}
+        if (node.Tags.ContainsKey ("highway") && node.Tags ["highway"] == "traffic_signals") {
+            Light light = n.AddComponent<Light> ();
+            Lights[id] = light;
+        }
     }
 
     public void addEdge(long id, ArrayList tags, List<long> refs) {
@@ -68,8 +71,8 @@ public class Map : MonoBehaviour {
         mapWays.Add(id, way);
     }
 
-    public void render() {
-        List<Node> intersections = mapNodes.Values.ToList().FindAll(delegate(Node n) {
+    public void Generate() {
+        intersections = mapNodes.Values.ToList().FindAll(delegate(Node n) {
                 return n.Edges.Count > 1;
             });
         long max = mapWays.Values.Max(delegate(Way w) {

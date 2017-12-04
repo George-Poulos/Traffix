@@ -6,6 +6,8 @@ using UnityEngine;
 public class Way : MonoBehaviour {
     public long id;
     public float weight;
+    public long StartId { get { return refs[0]; } }
+    public long EndId { get { return refs[refs.Count-1]; } }
     public List<Vector3> waypoints = new List<Vector3>();
     public Dictionary<string, string> tags = new Dictionary<string, string>();
     public List<long> refs = new List<long>();
@@ -39,16 +41,24 @@ public class Way : MonoBehaviour {
     }
 
     public long GetNext(long id) {
-        if(refs[0] == id)
-            return refs[refs.Count-1];
-        else if(refs[refs.Count-1] == id)
-            return refs[0];
+        if(StartId == id)
+            return EndId;
+        else if(!isOneWay() && EndId == id)
+            return StartId;
         else
-            throw new Exception(String.Format("invalid id {0} for {1}", id, this.id));
+            return -1;
+    }
+
+    public bool isOneWay() {
+        return tags.ContainsKey("oneway") && tags["oneway"] == "yes";
     }
 
     public bool isBisect(long id) {
-        return (refs[0] != id && refs[refs.Count-1] != id);
+        return (StartId != id && EndId != id);
+    }
+
+    public bool isBack(long id) {
+        return EndId == id;
     }
 
     public List<long> split(long id) {
