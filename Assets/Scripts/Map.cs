@@ -23,7 +23,7 @@ public class Map : MonoBehaviour {
 
     }
 
-    public void addNode(long id, float lat, float lon, ArrayList tags, bool isLight) {
+    public void addNode(long id, float lat, float lon, ArrayList tags) {
         GameObject n = new GameObject();
         n.transform.parent = transform;
         Vector3 nodePosition = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
