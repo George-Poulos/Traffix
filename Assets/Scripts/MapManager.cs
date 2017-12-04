@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour {
     public string xmlFileName;
-    public GameObject prefab;
+    public GameObject[] prefabs;
 
     private GameObject path;
     private GameObject navMapObj;
@@ -19,7 +19,7 @@ public class MapManager : MonoBehaviour {
         navMapObj.transform.position = new Vector3(0, 0, 0);
         navMapObj.AddComponent<NavMap>();
         var navMap = navMapObj.GetComponent<NavMap>();
-        navMap.spawnPrefab = prefab;
+        navMap.spawnPrefabs = prefabs;
         navMap.setMap(filePath);
     }
 

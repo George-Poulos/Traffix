@@ -5,6 +5,9 @@ using UnityEngine;
 public class Car : MonoBehaviour {
     public Vector3[] route;
     public float MoveSpeed = 8;
+    public Vector3 offset;
+    public Vector3 lookOffset;
+
     Coroutine MoveIE;
     private Transform ObjectToMove;
 
@@ -12,6 +15,9 @@ public class Car : MonoBehaviour {
     {
         ObjectToMove = transform;
         StartCoroutine(moveObject());
+        for (int i = 0; i < route.Length; i++) {
+            route[i] += offset;
+        }
     }
 
     IEnumerator moveObject()
@@ -29,7 +35,9 @@ public class Car : MonoBehaviour {
     {
         while (ObjectToMove.transform.position != route[currentPosition])
         {
-            ObjectToMove.transform.position = Vector3.MoveTowards(ObjectToMove.transform.position, route[currentPosition] , MoveSpeed * Time.deltaTime);
+            ObjectToMove.transform.LookAt(route[currentPosition]);
+            ObjectToMove.transform.rotation *= Quaternion.Euler(lookOffset);
+            ObjectToMove.transform.position = Vector3.MoveTowards(ObjectToMove.transform.position, route[currentPosition], MoveSpeed * Time.deltaTime);
             yield return null;
         }
 

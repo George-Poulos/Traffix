@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Spawn : MonoBehaviour {
     public float interval = 5f;
-    public GameObject car;
+    public GameObject[] cars;
 
     private List<NavPath> paths;
     private Node spawnNode;
@@ -37,7 +37,7 @@ public class Spawn : MonoBehaviour {
             float waitTime = (float)rand.NextDouble();
             yield return new WaitForSeconds(waitTime * interval);
             var p = paths[rand.Next(paths.Count)];
-            GameObject spawnedCar = Instantiate(car, transform.position, Quaternion.identity) as GameObject;
+            GameObject spawnedCar = Instantiate(cars[rand.Next(cars.Length)], transform.position, Quaternion.identity) as GameObject;
             spawnedCar.GetComponent<Car>().route = p.getPoints().ToArray();
         }
     }

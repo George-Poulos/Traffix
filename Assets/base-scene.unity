@@ -712,7 +712,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xmlFileName: map.xml
-  prefab: {fileID: 1093435096171652, guid: 6d0a6ce6d9a714dbdacd42ecd6d60bcf, type: 2}
+  prefabs:
+  - {fileID: 1342018839302644, guid: e84b9b5a3c80a466789e4de9e4aa4907, type: 2}
+  - {fileID: 1540660463583744, guid: 7ad275493ba564e06ab4560c9bf6783d, type: 2}
+  - {fileID: 1129673713136598, guid: ed598b873b162492b8c3b6e91810227a, type: 2}
+  - {fileID: 1397297798891594, guid: ce2f99cf76221403da838d2b70e01f13, type: 2}
+  - {fileID: 1530247578236928, guid: 48954cbcebe9e4f44a55e2f8abb68da0, type: 2}
+  - {fileID: 1180188456661894, guid: 37edb6b408889447aa5a617c819ec327, type: 2}
 --- !u!1001 &816558697
 Prefab:
   m_ObjectHideFlags: 0
