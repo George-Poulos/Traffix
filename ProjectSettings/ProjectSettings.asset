@@ -76,6 +76,7 @@ PlayerSettings:
   forceSingleInstance: 0
   resizableWindow: 1
   useMacAppStoreValidation: 0
+  macAppStoreCategory: public.app-category.games
   gpuSkinning: 1
   graphicsJobs: 0
   xboxPIXTextureCapture: 0
@@ -203,6 +204,7 @@ PlayerSettings:
   iOSMetalForceHardShadows: 0
   metalEditorSupport: 1
   metalAPIValidation: 1
+  iOSRenderExtraFrameOnPause: 1
   appleDeveloperTeamID: 
   iOSManualSigningProvisioningProfileID: 
   tvOSManualSigningProvisioningProfileID: 
@@ -228,7 +230,50 @@ PlayerSettings:
   - m_BuildTarget: Standalone
     m_Enabled: 1
     m_Devices:
+    - None
     - OpenVR
+  - m_BuildTarget: iOS
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: Android
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: WebGL
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: Tizen
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: PSP2
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: PS4
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: PSM
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: XboxOne
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: SamsungTV
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: N3DS
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: WiiU
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: tvOS
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: Facebook
+    m_Enabled: 0
+    m_Devices: []
+  - m_BuildTarget: 
+    m_Enabled: 0
+    m_Devices: []
   openGLRequireES31: 0
   openGLRequireES31AEP: 0
   webPlayerTemplate: APPLICATION:Default
@@ -251,6 +296,7 @@ PlayerSettings:
   wiiUGamePadStartupScreen: {fileID: 0}
   wiiUDrcBufferDisabled: 0
   wiiUProfilerLibPath: 
+  playModeTestRunnerEnabled: 0
   actionOnDotNetUnhandledException: 1
   enableInternalProfiler: 0
   logObjCUncaughtExceptions: 1
@@ -262,6 +308,7 @@ PlayerSettings:
   switchSocketMemoryPoolSize: 6144
   switchSocketAllocatorPoolSize: 128
   switchSocketConcurrencyLimit: 14
+  switchScreenResolutionBehavior: 2
   switchUseCPUProfiler: 0
   switchApplicationID: 0x01004b9000490000
   switchNSODependencies: 
@@ -277,9 +324,6 @@ PlayerSettings:
   switchTitleNames_9: 
   switchTitleNames_10: 
   switchTitleNames_11: 
-  switchTitleNames_12: 
-  switchTitleNames_13: 
-  switchTitleNames_14: 
   switchPublisherNames_0: 
   switchPublisherNames_1: 
   switchPublisherNames_2: 
@@ -292,9 +336,6 @@ PlayerSettings:
   switchPublisherNames_9: 
   switchPublisherNames_10: 
   switchPublisherNames_11: 
-  switchPublisherNames_12: 
-  switchPublisherNames_13: 
-  switchPublisherNames_14: 
   switchIcons_0: {fileID: 0}
   switchIcons_1: {fileID: 0}
   switchIcons_2: {fileID: 0}
@@ -307,9 +348,6 @@ PlayerSettings:
   switchIcons_9: {fileID: 0}
   switchIcons_10: {fileID: 0}
   switchIcons_11: {fileID: 0}
-  switchIcons_12: {fileID: 0}
-  switchIcons_13: {fileID: 0}
-  switchIcons_14: {fileID: 0}
   switchSmallIcons_0: {fileID: 0}
   switchSmallIcons_1: {fileID: 0}
   switchSmallIcons_2: {fileID: 0}
@@ -322,9 +360,6 @@ PlayerSettings:
   switchSmallIcons_9: {fileID: 0}
   switchSmallIcons_10: {fileID: 0}
   switchSmallIcons_11: {fileID: 0}
-  switchSmallIcons_12: {fileID: 0}
-  switchSmallIcons_13: {fileID: 0}
-  switchSmallIcons_14: {fileID: 0}
   switchManualHTML: 
   switchAccessibleURLs: 
   switchLegalInformation: 
@@ -340,7 +375,7 @@ PlayerSettings:
   switchApplicationErrorCodeCategory: 
   switchUserAccountSaveDataSize: 0
   switchUserAccountSaveDataJournalSize: 0
-  switchAttribute: 0
+  switchApplicationAttribute: 0
   switchCardSpecSize: -1
   switchCardSpecClock: -1
   switchRatingsMask: 0
@@ -367,6 +402,18 @@ PlayerSettings:
   switchParentalControl: 0
   switchAllowsScreenshot: 1
   switchDataLossConfirmation: 0
+  switchSupportedNpadStyles: 3
+  switchSocketConfigEnabled: 0
+  switchTcpInitialSendBufferSize: 32
+  switchTcpInitialReceiveBufferSize: 64
+  switchTcpAutoSendBufferSizeMax: 256
+  switchTcpAutoReceiveBufferSizeMax: 256
+  switchUdpSendBufferSize: 9
+  switchUdpReceiveBufferSize: 42
+  switchSocketBufferEfficiency: 4
+  switchSocketInitializeEnabled: 1
+  switchNetworkInterfaceManagerInitializeEnabled: 1
+  switchPlayerConnectionEnabled: 1
   ps4NPAgeRating: 12
   ps4NPTitleSecret: 
   ps4NPTrophyPackPath: 
@@ -496,7 +543,22 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLUseWasm: 0
   webGLCompressionFormat: 1
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: VRTK_DEFINE_SDK_STEAMVR;VRTK_DEFINE_STEAMVR_PLUGIN_1_2_1_OR_NEWER;VRTK_DEFINE_STEAMVR_PLUGIN_1_2_2_OR_NEWER;VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    4: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    7: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    13: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    17: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    18: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    19: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    20: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    21: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    22: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    23: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    24: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    25: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    26: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
+    27: VRTK_VERSION_3_2_1;VRTK_VERSION_3_2_1_OR_NEWER;VRTK_VERSION_3_1_0_OR_NEWER;VRTK_VERSION_3_2_0_OR_NEWER
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}
