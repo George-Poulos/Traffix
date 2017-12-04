@@ -8,16 +8,13 @@ public class Map : MonoBehaviour {
     public NavMap navMap;
     public Dictionary<long, Node> Nodes { get { return mapNodes; } }
     public Dictionary<long, Way> Ways { get { return mapWays; } }
-    public List<NavMeshSurface> navSurfaces = new List<NavMeshSurface>();
     private Dictionary<long, Node> mapNodes = new Dictionary<long, Node>();
     private Dictionary<long, Way> mapWays = new Dictionary<long, Way>();
     private List<Node> intersections;
 
     // Use this for initialization
     void Start () {
-        foreach(var surface in navSurfaces) {
-            surface.BuildNavMesh();
-        }
+      
     }
 
     // Update is called once per frame

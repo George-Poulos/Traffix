@@ -203,6 +203,6 @@ public class NavMap : MonoBehaviour {
                 }
             }
         }
-        return ret;
+       return ret;
     }
 }
