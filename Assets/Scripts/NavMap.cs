@@ -20,7 +20,7 @@ public class NavMap : MonoBehaviour {
 
     public GameObject mapObj { get; private set; }
     public GameObject[] spawnPrefabs;
-    public float scale = 1000;
+    public float scale = 500;
     public List<Node> intersections { get; private set; }
     public List<Node> spawnPoints { get; private set; }
     public Dictionary<long, int> pathMapping { get; private set; }

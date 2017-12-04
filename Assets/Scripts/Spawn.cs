@@ -20,10 +20,11 @@ public class Spawn : MonoBehaviour {
         var tmpPaths = navMap.getPaths(spawnNode.id);
         paths = new List<NavPath>();
         foreach(Node n in navMap.spawnPoints) {
-            if(tmpPaths[navMap.pathMapping[n.id]].isPath)
+            if(tmpPaths[navMap.pathMapping[n.id]].isPath && n.id != spawnNode.id)
                 paths.Add(tmpPaths[navMap.pathMapping[n.id]]);
         }
-        StartCoroutine(SpawnPrefab());
+        if(paths.Count > 0)
+            StartCoroutine(SpawnPrefab());
     }
 
     // Update is called once per frame

@@ -27,7 +27,6 @@ public class Car : MonoBehaviour {
             MoveIE = StartCoroutine(Moving(i));
             yield return MoveIE;
         }
-        yield return new WaitForSeconds(1);
         Destroy(gameObject);
     }
 
