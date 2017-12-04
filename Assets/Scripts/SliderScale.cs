@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SizeSlider : MonoBehaviour {
+public class SliderScale : MonoBehaviour {
 
 	float value; 
-	NavMap nav = GameObject.Find("NavMap").GetComponent<NavMap>();
+	NavMap nav;
 
 	// Use this for initialization
 	void Start () {
-
+		nav = GameObject.Find("NavMap").GetComponent<NavMap>();
 	}
 
 	// Update is called once per frame
