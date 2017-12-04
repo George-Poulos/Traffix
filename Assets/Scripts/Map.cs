@@ -32,11 +32,9 @@ public class Map : MonoBehaviour {
         node.addTags(tags);
         node.id = id;
         mapNodes.Add(id, node);
-        if (isLight) {            
-            Light streetLight = new Light(nodePosition, transform);
-            streetLight.draw();
-            Lights.Add(id, streetLight);
-        }
+		if (node.Tags.ContainsKey ("highway") && node.Tags ["highway"] == "traffic_signals") {
+			Light light = n.AddComponent<Light> ();
+		}
     }
 
     public void addEdge(long id, ArrayList tags, List<long> refs) {
