@@ -21,6 +21,8 @@ public class MoveCrap : MonoBehaviour {
             MoveIE = StartCoroutine(Moving(i));
             yield return MoveIE;
         }
+        yield return new WaitForSeconds(5);
+        Destroy(gameObject);
     }
 
     IEnumerator Moving(int currentPosition)
