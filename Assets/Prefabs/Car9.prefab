@@ -107,5 +107,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   route: []
   MoveSpeed: 8
-  offset: {x: 0, y: 0.0055, z: 0}
+  offset: {x: 0, y: 0.006, z: 0}
   lookOffset: {x: 90, y: 90, z: 0}
