@@ -19,7 +19,7 @@ public class NavMap : MonoBehaviour {
     }
 
     public GameObject mapObj { get; private set; }
-    public GameObject spawnPrefab;
+    public GameObject[] spawnPrefabs;
     public float scale = 1000;
     public List<Node> intersections { get; private set; }
     public List<Node> spawnPoints { get; private set; }
@@ -139,7 +139,7 @@ public class NavMap : MonoBehaviour {
         foreach(var node in spawnPoints) {
             paths[node.id] = Dijkstra(node);
             Spawn s = node.gameObject.AddComponent<Spawn>();
-            s.car = spawnPrefab;
+            s.cars = spawnPrefabs;
         }
     }
 
