@@ -224,6 +224,5 @@ public class RoadRenderer : MonoBehaviour {
         segment.name = gameObject.name + String.Format("-{0}",segments.Count);
         segments.Add(segment);
         paths.Add(path);
-        map.navSurfaces.Add(segment.AddComponent<NavMeshSurface>());
     }
 }
