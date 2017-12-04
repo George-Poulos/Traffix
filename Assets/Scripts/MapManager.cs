@@ -12,19 +12,23 @@ public class MapManager : MonoBehaviour {
     private GameObject navMapObj;
     private List<NavPath> paths;
     // Use this for initialization
-    void Start () {
-        string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, xmlFileName);
-
-        navMapObj = new GameObject("NavMap");
-        navMapObj.transform.position = new Vector3(0, 0, 0);
-        navMapObj.AddComponent<NavMap>();
-        var navMap = navMapObj.GetComponent<NavMap>();
-        navMap.spawnPrefabs = prefabs;
-        navMap.setMap(filePath);
+    void Awake () {
+		init ();
     }
 
     // Update is called once per frame
     void Update () {
 
     }
+
+	public void init(){
+		string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, xmlFileName);
+
+		navMapObj = new GameObject("NavMap");
+		navMapObj.transform.position = new Vector3(0, 0, 0);
+		navMapObj.AddComponent<NavMap>();
+		var navMap = navMapObj.GetComponent<NavMap>();
+		navMap.spawnPrefabs = prefabs;
+		navMap.setMap(filePath);
+	}
 }
