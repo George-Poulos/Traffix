@@ -21,7 +21,7 @@ public class MapManager : MonoBehaviour {
 
     }
 
-	public void init(){
+	public void init (){
 		string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, xmlFileName);
 
 		navMapObj = new GameObject("NavMap");
