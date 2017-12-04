@@ -12,37 +12,36 @@ public class Light : MonoBehaviour {
     private const float SCALE_FACTOR = 0.05f;
     private const float OFFSET = 0.1f;
     private const float TRANSPARANCY = 0.5f;
-    private GameObject Nlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-    private GameObject Slight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-    private GameObject Elight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-    private GameObject Wlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+    private GameObject Nlight;
+    private GameObject Slight;
+    private GameObject Elight;
+    private GameObject Wlight;
 
-// Use this for initialization
+    // Use this for initialization
     void Start () {
-		draw ();
+        draw ();
     }
 
     // Update is called once per frame
     void Update () {
         Nlight.transform.Rotate(0, 1, 0);
-        Debug.Log("Updating Light");
     }
 
     public void draw() {
-        GameObject Nlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        GameObject Slight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        GameObject Elight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        GameObject Wlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Nlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Slight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Elight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Wlight = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
-		Nlight.transform.parent = transform;
-		Slight.transform.parent = transform;
-		Elight.transform.parent = transform;
-		Wlight.transform.parent = transform;
+        Nlight.transform.parent = transform;
+        Slight.transform.parent = transform;
+        Elight.transform.parent = transform;
+        Wlight.transform.parent = transform;
 
-		Nlight.transform.position = transform.position;
-		Slight.transform.position = transform.position;
-		Elight.transform.position = transform.position;
-		Wlight.transform.position = transform.position;
+        Nlight.transform.position = transform.position;
+        Slight.transform.position = transform.position;
+        Elight.transform.position = transform.position;
+        Wlight.transform.position = transform.position;
 
         Nlight.transform.localScale = new Vector3(SCALE_FACTOR + OFFSET, SCALE_FACTOR, SCALE_FACTOR);
         Slight.transform.localScale = new Vector3(SCALE_FACTOR - OFFSET, SCALE_FACTOR, SCALE_FACTOR);
