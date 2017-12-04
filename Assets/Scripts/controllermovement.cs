@@ -16,7 +16,7 @@ public class controllermovement : MonoBehaviour
 	Vector2 touchpad;
 
 	float sensitivityX = 0.5F;
-	float sensitivityForward = 1.0F;
+	float sensitivityForward = 10.0F;
 	private Vector3 playerPos;
 
 	void Start()
