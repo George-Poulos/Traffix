@@ -24,13 +24,12 @@ public class DropDownAddOptions : MonoBehaviour {
 			menuMap.Add (id, i.Name);
 			++id;
 		}
-		GameObject nav = GameObject.Find("NavMap");
-		Destroy (nav);
+
 
 	}
 
 	public void onChange(int val){
-		NavMap nav = GameObject.Find("NavMap").GetComponent<NavMap>();
+		GameObject nav = GameObject.Find("NavMap");
 		Destroy (nav);
 		if (menuMap.ContainsKey (val)) {
 			mapManager.xmlFileName = menuMap [val];
