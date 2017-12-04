@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Node : MonoBehaviour {
     public long id;
-    private Dictionary<string, string> tags = new Dictionary<string, string>();
-    private List<long> edges = new List<long>();
+    public Dictionary<string, string> Tags = new Dictionary<string, string>();
+    public List<long> Edges = new List<long>();
 
     // Use this for initialization
     void Start () {
@@ -18,12 +18,18 @@ public class Node : MonoBehaviour {
     }
 
     public void addEdge(long id) {
-        edges.Add(id);
+        Edges.Add(id);
     }
 
     public void addTags(ArrayList tags) {
         foreach(ArrayList tag in tags) {
-            this.tags.Add((string)tag[0], (string)tag[1]);
+            this.Tags.Add((string)tag[0], (string)tag[1]);
+        }
+    }
+
+    public void replaceEdge(long id, long replacementId) {
+        for(int i = 0; i < Edges.Count; i++) {
+            if(Edges[i] == id) Edges[i] = replacementId;
         }
     }
 }

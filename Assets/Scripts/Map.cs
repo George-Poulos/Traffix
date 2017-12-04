@@ -1,27 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Map : MonoBehaviour {
     public NavMap navMap;
+    public Dictionary<long, Node> Nodes { get { return mapNodes; } }
+    public Dictionary<long, Way> Ways { get { return mapWays; } }
     private Dictionary<long, Node> mapNodes = new Dictionary<long, Node>();
     private Dictionary<long, Way> mapWays = new Dictionary<long, Way>();
 
     // Use this for initialization
     void Start () {
-        int i = 0, j = 0, k = 0;
-        foreach(Way w in mapWays.Values) {
-            if(w.refs.Count == 2) {
-                i++;
-            } else if(w.refs.Count == 4) {
-                j++;
-            } else {
-                k++;
-            }
-        }
-        Debug.Log(i);
-        Debug.Log(j);
-        Debug.Log(k);
     }
 
     // Update is called once per frame
@@ -42,53 +33,9 @@ public class Map : MonoBehaviour {
     }
 
     public void addEdge(long id, ArrayList tags, List<long> refs) {
-        GameObject w;
-        if(refs.Count == 2) {
-            w = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            Vector3 start = mapNodes[refs[0]].transform.position;
-            Vector3 end = mapNodes[refs[1]].transform.position;
-
-            Vector3 between = end - start;
-            float distance = between.magnitude;
-            Vector3 scale = w.transform.localScale;
-            scale.x = 0.01F;
-            scale.y = 0.001F;
-            scale.z = distance;
-            w.transform.localScale = scale;
-            w.transform.position = start + (between / 2.0F);
-            w.transform.LookAt(end);
-
-            Material roadMaterial = new Material(Shader.Find("Standard"));
-            w.GetComponent<MeshRenderer>().material = roadMaterial;
-            roadMaterial.mainTexture = Resources.Load("road") as Texture;
-            roadMaterial.mainTextureScale = new Vector2(1,35*distance);
-        } else if(refs.Count == 4) {
-            w = new GameObject();
-            var line = w.AddComponent<LineRenderer>();
-            line.material = new Material(Shader.Find("Sprites/Default"));
-            line.startColor = Color.yellow;
-            line.endColor = Color.yellow;
-            // Set the width of the Line Renderer
-            line.SetWidth(0.01F, 0.01F);
-            // Set the number of vertex fo the Line Renderer
-            line.positionCount = refs.Count;
-            for(int i = 0; i < refs.Count; i++) {
-                line.SetPosition(i, mapNodes[refs[i]].transform.position);
-            }
-            //            w = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        } else {
-            w = new GameObject();
-            var line = w.AddComponent<LineRenderer>();
-            // Set the width of the Line Renderer
-            line.SetWidth(0.01F, 0.01F);
-            // Set the number of vertex fo the Line Renderer
-            line.positionCount = refs.Count;
-            for(int i = 0; i < refs.Count; i++) {
-                line.SetPosition(i, mapNodes[refs[i]].transform.position);
-            }
-        }
-        w.transform.parent = transform;
+        GameObject w = new GameObject();
         w.name = id.ToString();
+        w.transform.parent = transform;
         Way way = w.AddComponent<Way>();
         way.addTags(tags);
         way.id = id;
@@ -98,5 +45,52 @@ public class Map : MonoBehaviour {
             n.addEdge(id);
         }
         mapWays.Add(id, way);
+    }
+
+    public void splitEdge(long id, Way edge, long bisectId) {
+        GameObject w = new GameObject();
+        w.name = id.ToString();
+        w.transform.parent = transform;
+        Way way = w.AddComponent<Way>();
+        way.addTags(edge.tags);
+        way.id = id;
+        List<long> splitRefs = edge.split(bisectId);
+        foreach(long nodeId in splitRefs) {
+            way.addRef(nodeId);
+            Node n = mapNodes[nodeId];
+            n.replaceEdge(edge.id, id);
+        }
+        mapWays.Add(id, way);
+    }
+
+    public void render() {
+        List<Node> intersections = mapNodes.Values.ToList().FindAll(delegate(Node n) {
+                return n.Edges.Count > 1;
+            });
+        long max = mapWays.Values.Max(delegate(Way w) {
+                return w.id;
+            });
+        long nextEdgeId = max + 1;
+        foreach(Node intersection in intersections) {
+            foreach(var edgeId in intersection.Edges) {
+                Way edge = mapWays[edgeId];
+                if(edge.isBisect(intersection.id)) {
+                    splitEdge(nextEdgeId, edge, intersection.id);
+                    nextEdgeId++;
+                }
+            }
+        }
+
+        foreach(Way way in mapWays.Values) {
+            GameObject w = way.gameObject;
+            var renderer = w.AddComponent<RoadRenderer>();
+            renderer.map = this;
+            Vector3[] positions = new Vector3[way.refs.Count];
+            for(int i = 0; i < way.refs.Count; i++) {
+                positions[i] = mapNodes[way.refs[i]].transform.position;
+            }
+            renderer.AddPositions(positions);
+            renderer.GenSegments();
+        }
     }
 }
