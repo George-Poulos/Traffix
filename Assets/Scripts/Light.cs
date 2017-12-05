@@ -12,19 +12,57 @@ public class Light : MonoBehaviour {
     private const float SCALE_FACTOR = 0.05f;
     private const float OFFSET = 0.1f;
     private const float TRANSPARANCY = 0.5f;
-    private GameObject Nlight;
-    private GameObject Slight;
-    private GameObject Elight;
-    private GameObject Wlight;
+    private GameObject Nlight, Slight, Elight, Wlight;
 
     // Use this for initialization
     void Start () {
+        // Initially set the lights to a random state.
+        lightState = (LightState)Math.Round(UnityEngine.Random.value);
         draw ();
+        InvokeRepeating("NextState", 
+            0.2f + UnityEngine.Random.value, 
+            2.0f + UnityEngine.Random.value);
     }
 
     // Update is called once per frame
     void Update () {
-        Nlight.transform.Rotate(0, 1, 0);
+        // Nlight.transform.Rotate(0, 1, 0);
+    }
+
+    void NextState()
+    {
+        switch (lightState) {
+            case LightState.GREEN_RED:
+                setState(LightState.RED_GREEN);
+                break;
+            case LightState.RED_GREEN:                
+                setState(LightState.GREEN_RED);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void setState(LightState ls)
+    {
+        switch (ls) {
+            case LightState.RED_GREEN:
+                setLightColor(Nlight, LightColor.RED);
+                setLightColor(Slight, LightColor.RED);
+                setLightColor(Elight, LightColor.GREEN);
+                setLightColor(Wlight, LightColor.GREEN);
+                break;
+            case LightState.GREEN_RED:
+                setLightColor(Nlight, LightColor.GREEN);
+                setLightColor(Slight, LightColor.GREEN);
+                setLightColor(Elight, LightColor.RED);
+                setLightColor(Wlight, LightColor.RED);
+                break;
+            default:
+                break;
+        }
+        
+        lightState = ls;
     }
 
     public void draw() {
@@ -48,22 +86,7 @@ public class Light : MonoBehaviour {
         Elight.transform.localScale = new Vector3(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR + OFFSET);
         Wlight.transform.localScale = new Vector3(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR - OFFSET);
 
-        switch (lightState) {
-            case LightState.RED_GREEN:
-                setLightColor(Nlight, LightColor.RED);
-                setLightColor(Slight, LightColor.RED);
-                setLightColor(Elight, LightColor.GREEN);
-                setLightColor(Wlight, LightColor.GREEN);
-                break;
-            case LightState.GREEN_RED:
-                setLightColor(Nlight, LightColor.GREEN);
-                setLightColor(Slight, LightColor.GREEN);
-                setLightColor(Elight, LightColor.RED);
-                setLightColor(Wlight, LightColor.RED);
-                break;
-            default:
-                break;
-        }
+        setState(lightState);
     }
 
     private void setLightColor(GameObject go, LightColor lc)
