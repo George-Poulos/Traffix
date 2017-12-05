@@ -9,9 +9,9 @@ public class Light : MonoBehaviour {
     public enum LightState { RED_GREEN, GREEN_RED }
     public enum LightColor { RED, GREEN }
     private LightState lightState;
-    private const float SCALE_FACTOR = 0.05f;
+    private const float SCALE_FACTOR = 0.02f;
     private const float OFFSET = 0.1f;
-    private const float TRANSPARANCY = 0.5f;
+    private const float TRANSPARANCY = 0.4f;
     private GameObject Nlight, Slight, Elight, Wlight;
 
     // Use this for initialization
@@ -26,7 +26,6 @@ public class Light : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        // Nlight.transform.Rotate(0, 1, 0);
     }
 
     void NextState()
