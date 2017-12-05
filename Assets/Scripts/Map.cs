@@ -10,11 +10,12 @@ public class Map : MonoBehaviour {
     public Dictionary<long, Way> Ways { get { return mapWays; } }
     private Dictionary<long, Node> mapNodes = new Dictionary<long, Node>();
     private Dictionary<long, Way> mapWays = new Dictionary<long, Way>();
+    private Dictionary<long, Light> Lights = new Dictionary<long, Light>();
     private List<Node> intersections;
 
     // Use this for initialization
     void Start () {
-      
+
     }
 
     // Update is called once per frame
@@ -25,13 +26,18 @@ public class Map : MonoBehaviour {
     public void addNode(long id, float lat, float lon, ArrayList tags) {
         GameObject n = new GameObject();
         n.transform.parent = transform;
-        n.transform.position = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
+        Vector3 nodePosition = new Vector3(navMap.lonToX(lon), 0, navMap.latToY(lat));
+        n.transform.position = nodePosition;
         n.name = id.ToString();
         n.AddComponent<Node>();
         Node node = n.GetComponent<Node>();
         node.addTags(tags);
         node.id = id;
         mapNodes.Add(id, node);
+        if (node.Tags.ContainsKey ("highway") && node.Tags ["highway"] == "traffic_signals") {
+            Light light = n.AddComponent<Light> ();
+            Lights[id] = light;
+        }
     }
 
     public void addEdge(long id, ArrayList tags, List<long> refs) {
