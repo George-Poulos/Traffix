@@ -18,9 +18,9 @@ public class DropDownAddOptions : MonoBehaviour {
 		string currFile = mapManager.xmlFileName;
 		foreach( var i in info){
 			dropDown.options.Add (new Dropdown.OptionData (){text = i.Name});
-			if (currFile == i.Name) {
-				dropDown.value = id;
-			}
+//			if (currFile == i.Name) {
+//				dropDown.value = id;
+//			}
 			menuMap.Add (id, i.Name);
 			++id;
 		}
