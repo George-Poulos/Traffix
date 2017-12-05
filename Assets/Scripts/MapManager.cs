@@ -13,7 +13,6 @@ public class MapManager : MonoBehaviour {
     private List<NavPath> paths;
     // Use this for initialization
     void Awake () {
-		init ();
     }
 
     // Update is called once per frame

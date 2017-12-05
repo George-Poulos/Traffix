@@ -10,7 +10,7 @@ public class SliderScale : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		nav = GameObject.Find("NavMap").GetComponent<NavMap>();
+		
 	}
 
 	// Update is called once per frame
@@ -20,6 +20,7 @@ public class SliderScale : MonoBehaviour {
 
 	public void ValueChangeCheck(float newValue)
 	{
+		nav = GameObject.Find("NavMap").GetComponent<NavMap>();
 		value = newValue;
 		nav.transform.localScale = new Vector3 (value, value, value);
 	}
