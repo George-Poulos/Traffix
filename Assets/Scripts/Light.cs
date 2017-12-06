@@ -14,7 +14,7 @@ public class Light : MonoBehaviour {
     private const float TRANSPARANCY = 0.1f;
     public const float CYCLE_SPEED = 0.5f; // Base cycle speed for all the lights.  Lower is faster.
     private const int GREEN_INTERVAL = 10;
-    private const int YELLOW_INTERVAL = 1;
+    private const int YELLOW_INTERVAL = 2;
     private const int RED_INTERVAL = 1; // Interval for red-red lights
     private int currentInterval = 0;
     private GameObject Nlight, Slight, Elight, Wlight;
