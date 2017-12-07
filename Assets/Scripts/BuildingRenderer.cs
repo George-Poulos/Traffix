@@ -11,7 +11,7 @@ public class BuildingRenderer : MonoBehaviour {
     // Use this for initialization
     void Start () {
         b = gameObject.GetComponent<Building>();
-        float height = .1f;
+        float height = map.navMap.metersToUnit(130f);
         try {
             if(b.tags.ContainsKey("height"))
                 height = map.navMap.metersToUnit(float.Parse(b.tags["height"]));
@@ -22,7 +22,7 @@ public class BuildingRenderer : MonoBehaviour {
         }
 
         for(int i = 1; i < verticesPos.Count; i++) {
-            GameObject w = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject w = Instantiate(map.navMap.buildingPrefab, transform.position, Quaternion.identity) as GameObject;
             Vector3 start = verticesPos[i-1];
             Vector3 end = verticesPos[i];
 

@@ -20,6 +20,8 @@ public class NavMap : MonoBehaviour {
 
     public GameObject mapObj { get; private set; }
     public GameObject[] spawnPrefabs;
+    public GameObject roadPrefab;
+    public GameObject buildingPrefab;
     public float latScale = 500;
     public float latLonRatio = .7474f;
     public List<Node> intersections { get; private set; }
