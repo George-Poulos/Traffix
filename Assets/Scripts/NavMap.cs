@@ -26,6 +26,7 @@ public class NavMap : MonoBehaviour {
     public List<Node> spawnPoints { get; private set; }
     public Dictionary<long, int> pathMapping { get; private set; }
 
+    private enum WayType { ROAD, BUILDING, OTHER };
     private float minLat, minLon, maxLat, maxLon;
     private Map map;
     private List<string> roadTypes = new List<string> { "motorway", "trunk",
@@ -43,7 +44,7 @@ public class NavMap : MonoBehaviour {
     }
 
     public void setMap(string mapFilePath) {
-        bool shouldAdd;
+        WayType type;
         ArrayList tags;
         long id;
         XmlNodeList children;
@@ -97,8 +98,8 @@ public class NavMap : MonoBehaviour {
 
                 case "way":
                     id = long.Parse(attrs["id"].Value);
-                    shouldAdd = false;
                     tags = new ArrayList();
+                    type = WayType.OTHER;
                     var refs = new List<long>();
                     children = node.ChildNodes;
                     foreach(XmlNode child in children) {
@@ -106,8 +107,8 @@ public class NavMap : MonoBehaviour {
                             case "tag":
                                 string key = child.Attributes["k"].Value;
                                 string val = child.Attributes["v"].Value;
-                                if(key == "highway" && roadTypes.Contains(val)) shouldAdd = true;
-                                if(key == "layer" && val != "0") shouldAdd = false;
+                                if(key == "highway" && roadTypes.Contains(val)) type = WayType.ROAD;
+                                if(key == "building") type = WayType.BUILDING;
                                 var tag = new ArrayList();
                                 tag.Add(key);
                                 tag.Add(val);
@@ -122,7 +123,8 @@ public class NavMap : MonoBehaviour {
                                 break;
                         }
                     }
-                    if(shouldAdd) map.addEdge(id, tags, refs);
+                    if(type == WayType.ROAD) map.addEdge(id, tags, refs);
+                    else if(type == WayType.BUILDING) map.addBuilding(id, tags, refs);
                     break;
 
                 default:
