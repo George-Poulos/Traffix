@@ -38,6 +38,9 @@ public class BuildingRenderer : MonoBehaviour {
             w.transform.parent = transform;
             w.name = gameObject.name + "-" + i.ToString();
         }
+        Vector3 position = transform.position;
+        position += new Vector3(0,height/2.0F,0);
+        transform.position = position;
     }
 
     // Update is called once per frame
