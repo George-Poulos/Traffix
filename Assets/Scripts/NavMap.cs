@@ -20,7 +20,8 @@ public class NavMap : MonoBehaviour {
 
     public GameObject mapObj { get; private set; }
     public GameObject[] spawnPrefabs;
-    public float scale = 500;
+    public float latScale = 500;
+    public float latLonRatio = .7474f;
     public List<Node> intersections { get; private set; }
     public List<Node> spawnPoints { get; private set; }
     public Dictionary<long, int> pathMapping { get; private set; }
@@ -150,19 +151,27 @@ public class NavMap : MonoBehaviour {
     }
 
     public float lonToX(float lon) {
-        return (lon - minLon) * scale;
+        return (lon - minLon) * latScale * latLonRatio;
     }
 
     public float latToY(float lat) {
-        return (lat - minLat) * scale;
+        return (lat - minLat) * latScale;
     }
 
     public float xToLon(float x) {
-        return (x/scale) + minLon;
+        return (x/(latScale * latLonRatio)) + minLon;
     }
 
     public float yToLat(float y) {
-        return (y/scale) + minLat;
+        return (y/latScale) + minLat;
+    }
+
+    public float metersToUnit(float meters) {
+        return latScale/111000 * meters;
+    }
+
+    public float unitsToMeters(float x) {
+        return 111000/latScale * x;
     }
 
     public List<NavPath> getPaths(long id) {
