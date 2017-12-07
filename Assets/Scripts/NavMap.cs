@@ -20,11 +20,13 @@ public class NavMap : MonoBehaviour {
 
     public GameObject mapObj { get; private set; }
     public GameObject[] spawnPrefabs;
-    public float scale = 500;
+    public float latScale = 500;
+    public float latLonRatio = .7474f;
     public List<Node> intersections { get; private set; }
     public List<Node> spawnPoints { get; private set; }
     public Dictionary<long, int> pathMapping { get; private set; }
 
+    private enum WayType { ROAD, BUILDING, OTHER };
     private float minLat, minLon, maxLat, maxLon;
     private Map map;
     private List<string> roadTypes = new List<string> { "motorway", "trunk",
@@ -42,7 +44,7 @@ public class NavMap : MonoBehaviour {
     }
 
     public void setMap(string mapFilePath) {
-        bool shouldAdd;
+        WayType type;
         ArrayList tags;
         long id;
         XmlNodeList children;
@@ -96,8 +98,8 @@ public class NavMap : MonoBehaviour {
 
                 case "way":
                     id = long.Parse(attrs["id"].Value);
-                    shouldAdd = false;
                     tags = new ArrayList();
+                    type = WayType.OTHER;
                     var refs = new List<long>();
                     children = node.ChildNodes;
                     foreach(XmlNode child in children) {
@@ -105,8 +107,8 @@ public class NavMap : MonoBehaviour {
                             case "tag":
                                 string key = child.Attributes["k"].Value;
                                 string val = child.Attributes["v"].Value;
-                                if(key == "highway" && roadTypes.Contains(val)) shouldAdd = true;
-                                if(key == "layer" && val != "0") shouldAdd = false;
+                                if(key == "highway" && roadTypes.Contains(val)) type = WayType.ROAD;
+                                if(key == "building") type = WayType.BUILDING;
                                 var tag = new ArrayList();
                                 tag.Add(key);
                                 tag.Add(val);
@@ -121,7 +123,8 @@ public class NavMap : MonoBehaviour {
                                 break;
                         }
                     }
-                    if(shouldAdd) map.addEdge(id, tags, refs);
+                    if(type == WayType.ROAD) map.addEdge(id, tags, refs);
+                    else if(type == WayType.BUILDING) map.addBuilding(id, tags, refs);
                     break;
 
                 default:
@@ -150,19 +153,27 @@ public class NavMap : MonoBehaviour {
     }
 
     public float lonToX(float lon) {
-        return (lon - minLon) * scale;
+        return (lon - minLon) * latScale * latLonRatio;
     }
 
     public float latToY(float lat) {
-        return (lat - minLat) * scale;
+        return (lat - minLat) * latScale;
     }
 
     public float xToLon(float x) {
-        return (x/scale) + minLon;
+        return (x/(latScale * latLonRatio)) + minLon;
     }
 
     public float yToLat(float y) {
-        return (y/scale) + minLat;
+        return (y/latScale) + minLat;
+    }
+
+    public float metersToUnit(float meters) {
+        return latScale/111000 * meters;
+    }
+
+    public float unitsToMeters(float x) {
+        return 111000/latScale * x;
     }
 
     public List<NavPath> getPaths(long id) {

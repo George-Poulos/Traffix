@@ -10,6 +10,7 @@ public class Map : MonoBehaviour {
     public Dictionary<long, Way> Ways { get { return mapWays; } }
     private Dictionary<long, Node> mapNodes = new Dictionary<long, Node>();
     private Dictionary<long, Way> mapWays = new Dictionary<long, Way>();
+    private Dictionary<long, Building> mapBuildings = new Dictionary<long, Building>();
     private Dictionary<long, Light> Lights = new Dictionary<long, Light>();
     private List<Node> intersections;
 
@@ -53,6 +54,19 @@ public class Map : MonoBehaviour {
             n.addEdge(id);
         }
         mapWays.Add(id, way);
+    }
+
+    public void addBuilding(long id, ArrayList tags, List<long> refs) {
+        GameObject building = new GameObject();
+        Building b = building.AddComponent<Building>();
+        b.transform.parent = transform;
+        b.addTags(tags);
+        b.id = id;
+        building.name = (b.tags.ContainsKey("name")) ? b.tags["name"] : id.ToString();
+        foreach(long nodeId in refs) {
+            b.addRef(nodeId);
+        }
+        mapBuildings.Add(id, b);
     }
 
     public void splitEdge(long id, Way edge, long bisectId) {
@@ -99,6 +113,15 @@ public class Map : MonoBehaviour {
             }
             renderer.AddPositions(positions);
             renderer.GenSegments();
+        }
+        foreach(Building b in mapBuildings.Values) {
+            var renderer = b.gameObject.AddComponent<BuildingRenderer>();
+            renderer.map = this;
+            Vector3[] positions = new Vector3[b.refs.Count];
+            for(int i = 0; i < b.refs.Count; i++) {
+                positions[i] = mapNodes[b.refs[i]].transform.position;
+            }
+            renderer.AddPositions(positions);
         }
     }
 }
