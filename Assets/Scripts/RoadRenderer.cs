@@ -63,7 +63,7 @@ public class RoadRenderer : MonoBehaviour {
     private void RenderSegment(GameObject segment, ExtrudeShape shape, OrientedPoint[] path) {
         // TODO: use the shape from the previous segment to make segments continuous
         // TODO: use sampling to fix texture stretching
-        MeshFilter mf = segment.AddComponent<MeshFilter>();
+        MeshFilter mf = segment.GetComponent<MeshFilter>();
         Mesh mesh = mf.mesh;
         Extrude(mesh, shape, path);
     }
@@ -200,10 +200,7 @@ public class RoadRenderer : MonoBehaviour {
     private void AddSegment(Vector3[] points, int edgeLoops) {
         OrientedPoint[] path = new OrientedPoint[edgeLoops+1];
         CubicBezier3D bezier = new CubicBezier3D(points);
-        GameObject segment = new GameObject();
-
-        var renderer = segment.AddComponent<MeshRenderer>();
-
+        GameObject segment = Instantiate(map.navMap.roadPrefab, transform.position, Quaternion.identity) as GameObject;
         Vector3? prev = null, curr = null;
         for(int i = 0; i <= edgeLoops; i++) {
             float t = (1f/edgeLoops) * i;
@@ -215,11 +212,6 @@ public class RoadRenderer : MonoBehaviour {
             }
             path[i] = new OrientedPoint((Vector3)curr, bezier.GetOrientation3D(t, Vector3.up));
         }
-
-        Material roadMaterial = new Material(Shader.Find("Standard"));
-        renderer.material = roadMaterial;
-        roadMaterial.mainTexture = Resources.Load("road") as Texture;
-
         segment.transform.parent = transform;
         segment.name = gameObject.name + String.Format("-{0}",segments.Count);
         segments.Add(segment);

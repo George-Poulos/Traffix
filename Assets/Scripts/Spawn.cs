@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Spawn : MonoBehaviour {
-    public float interval = 25f;
+    public float interval = 10f;
     public GameObject[] cars;
 
     private List<NavPath> paths;
