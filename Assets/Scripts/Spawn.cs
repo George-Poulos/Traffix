@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Spawn : MonoBehaviour {
-    public float interval = 5f;
+    public float interval = 25f;
     public GameObject[] cars;
 
     private List<NavPath> paths;
@@ -17,14 +17,13 @@ public class Spawn : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-		navMap = GameObject.Find("NavMap").GetComponent<NavMap>();
+        navMap = GameObject.Find("NavMap").GetComponent<NavMap>();
         var tmpPaths = navMap.getPaths(spawnNode.id);
         paths = new List<NavPath>();
         foreach(Node n in navMap.spawnPoints) {
             if(tmpPaths[navMap.pathMapping[n.id]].isPath && n.id != spawnNode.id)
                 paths.Add(tmpPaths[navMap.pathMapping[n.id]]);
         }
-		Debug.Log (paths.Count);
         if(paths.Count > 0)
             StartCoroutine(SpawnPrefab());
     }

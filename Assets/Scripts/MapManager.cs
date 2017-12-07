@@ -20,14 +20,13 @@ public class MapManager : MonoBehaviour {
 
     }
 
-	public void init (){
-		string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, xmlFileName);
+    public void init (){
+        string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, xmlFileName);
 
-		navMapObj = new GameObject("NavMap");
-		navMapObj.transform.position = new Vector3(0, 0, 0);
-		navMapObj.AddComponent<NavMap>();
-		var navMap = navMapObj.GetComponent<NavMap>();
-		navMap.spawnPrefabs = prefabs;
-		navMap.setMap(filePath);
-	}
+        navMapObj = new GameObject("NavMap");
+        navMapObj.transform.position = new Vector3(0, 0, 0);
+        var navMap = navMapObj.AddComponent<NavMap>();
+        navMap.spawnPrefabs = prefabs;
+        navMap.setMap(filePath);
+    }
 }
