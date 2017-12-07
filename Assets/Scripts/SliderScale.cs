@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class SliderScale : MonoBehaviour {
 
-	float value; 
-	NavMap nav;
 
 	// Use this for initialization
 	void Start () {
@@ -20,8 +18,9 @@ public class SliderScale : MonoBehaviour {
 
 	public void ValueChangeCheck(float newValue)
 	{
-		nav = GameObject.Find("NavMap").GetComponent<NavMap>();
-		value = newValue;
-		nav.transform.localScale = new Vector3 (value, value, value);
+		var tmp = GameObject.FindObjectsOfType<Spawn> ();
+		foreach (Spawn b in tmp) {
+			b.interval = newValue;
+		}
 	}
 }

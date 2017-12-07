@@ -4,6 +4,14 @@ using System.Collections;
 public class SpaceButtonAction : MonoBehaviour {
 
 	private bool viewBuildings = true;
+	BuildingRenderer [] bUnits = null;
+
+	float interval = 10f;
+
+	void Start(){
+		
+
+	}
 
     void Update() {
         if (Input.GetKeyDown ("a")) {
@@ -23,11 +31,20 @@ public class SpaceButtonAction : MonoBehaviour {
                 mapManager.init ();
         }
 		if (Input.GetKeyDown ("q")) {
-			var bUnits = GameObject.FindObjectsOfType<BuildingRenderer>();
+			if (bUnits == null) {
+				bUnits = GameObject.FindObjectsOfType<BuildingRenderer>();
+			}
 	 		Debug.Log ("Hello");
 			viewBuildings = !viewBuildings;
-			foreach (var b in bUnits) {
+			foreach (BuildingRenderer b in bUnits) {
 				b.gameObject.SetActive (viewBuildings);
+			}
+		}
+
+		if (Input.GetKeyDown ("p")) {
+			var tmp = GameObject.FindObjectsOfType<Spawn> ();
+			foreach (Spawn b in tmp) {
+				b.interval += interval;
 			}
 		}
 	}

@@ -10,6 +10,9 @@ public class MenuToggle : MonoBehaviour {
 
 	bool menuState = false;
 
+	void Start(){
+	}
+
 	void OnEnable(){
 		controllerEvents.ButtonTwoReleased += ControllerEvents_ButtonTwoReleased;
 	}
